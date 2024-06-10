@@ -35,10 +35,19 @@ app.use(cors());
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 
+app.post('/clear', async (req, res) => {
+    try {
+        await JobPosting.deleteMany({});
+        res.status(201).json({ message: 'Job postings cleared successfully' });
+    } catch (err) {
+        console.error('Error clearing job postings:', err.message);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 // Endpoint to accept and store job posting data
 app.post('/jobpostings', async (req, res) => {
     try {
-        await JobPosting.deleteMany({});
         const newPostings = req.body;
         await JobPosting.insertMany(newPostings);
         res.status(201).json({ message: 'Job postings added successfully' });
